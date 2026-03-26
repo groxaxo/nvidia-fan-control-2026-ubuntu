@@ -1,61 +1,39 @@
-# NVIDIA Fan Control (Ubuntu)
+# ⚡️🌈 NVIDIA Fan Control — TRIPPY EDITION 🛸🍄
 
-NVML-based dynamic fan control for NVIDIA GPUs. Uses pynvml (nvidia-ml-py) so no X11 is required.
+╔════════════════════════════════════════════════════════════════════════╗
+║  🌀✨🌈 WELCOME, EARTHLING — meet the fan guardian that GROOVES with temps 🌈✨🌀  ║
+╠════════════════════════════════════════════════════════════════════════╣
+║  This daemon listens to each NVIDIA GPU's heartbeat (temperature), and    ║
+║  gently nudges the fans to keep your rig cool, quiet, and very, very     ║
+║  relaxed. No X server. Just NVML, pure vibes.                            ║
+╚════════════════════════════════════════════════════════════════════════╝
 
-## Features
-- Adaptive fan curves (default, quiet, performance)
-- Systemd service for autostart
-- No X server dependency
+                  .-"""-.
+               .-"       "-.
+             .'  .-"""-.  `.
+            /   /  .-.  \   \
+           ;   ;  (   )  ;   ;
+           |   |   `-`   |   |
+           ;   ;  .---.  ;   ;
+            \   \(     )/   /
+             `.  `-.-'  .'
+               `-.___.-'
 
-## Requirements
-- Ubuntu with NVIDIA drivers installed (NVML support)
-- python3, pip3
-- Root privileges to control fans
+---
 
-## Quick install
+NVML-driven, systemd-enabled, and tuned with three curves:
+- default — balanced cooling
+- quiet — quieter, warmer
+- performance — aggressive cooling
 
-1. Install prerequisites:
+Quick install (summary):
 
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-pip
 sudo pip3 install nvidia-ml-py
+sudo ./install.sh    # from the repo root
 ```
 
-2. Copy files and enable service (from repo root):
-
-```bash
-sudo cp nvidia-fan-control.py /usr/local/bin/
-sudo chmod +x /usr/local/bin/nvidia-fan-control.py
-sudo cp nvidia-fan-control.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable --now nvidia-fan-control.service
-```
-
-3. Verify:
-
-```bash
-systemctl status nvidia-fan-control.service
-journalctl -u nvidia-fan-control.service -f
-nvidia-smi --query-gpu=index,name,temperature.gpu,fan.speed --format=csv
-```
-
-## Troubleshooting
-- If `pynvml` is missing: `sudo pip3 install nvidia-ml-py`
-- If you see `Insufficient Permissions`, ensure the service is running as root or run the script with `sudo`.
-- Ensure `nvidia-persistenced` is running: `sudo systemctl enable --now nvidia-persistenced.service`.
-
-## Usage
-Run directly for testing:
-
-```bash
-sudo /usr/bin/python3 /usr/local/bin/nvidia-fan-control.py --curve quiet --interval 10
-```
-
-Stopping service:
-
-```bash
-sudo systemctl stop nvidia-fan-control.service
-sudo systemctl disable nvidia-fan-control.service
-```
+More details, usage, and troubleshooting below in this README.
 
