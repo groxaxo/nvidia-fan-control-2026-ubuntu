@@ -1,34 +1,74 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-rainbow_banner() {
-  local -a colors=(31 33 35 36 32 34 91 95)
-  local i=0
-  while IFS= read -r line; do
-    local c=${colors[i % ${#colors[@]}]}
-    printf "\e[${c}m%s\e[0m\n" "$line"
+# Configuration
+GRADIENT_SPEED="medium"  # fast|medium|slow
+
+# Map gradient speed to sleep delay per character
+case "${GRADIENT_SPEED}" in
+  fast) DELAY=0.002 ;; 
+  slow) DELAY=0.020 ;; 
+  *) DELAY=0.007 ;; # medium
+esac
+
+# Colors to cycle through (bright rainbow)
+colors=(91 95 35 33 31 36 32 34)
+
+per_char_gradient() {
+  local text="$1"
+  local delay="$2"
+  local -i i=0
+  local -i idx=0
+  local len=${#text}
+
+  while [ $i -lt $len ]; do
+    ch="${text:i:1}"
+    color=${colors[$((idx % ${#colors[@]}))]}
+    printf "\e[${color}m%s\e[0m" "$ch"
     i=$((i+1))
+    idx=$((idx+1))
+    sleep "$delay"
   done
+  printf "\n"
 }
 
-rainbow_banner <<'RB'
-  ██████╗ ██████╗ ██████╗ ███████╗██████╗  ██████╗ ███████╗
-  ██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔═══██╗██╔════╝
-  ██████╔╝██████╔╝██████╔╝█████╗  ██████╔╝██║   ██║███████╗
-  ██╔═══╝ ██╔═══╝ ██╔═══╝ ██╔══╝  ██╔══██╗██║   ██║╚════██║
-  ██║     ██║     ██║     ███████╗██║  ██║╚██████╔╝███████║
-  ╚═╝     ╚═╝     ╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+# Banner lines
+banner=(
+  " ███╗   ██╗ ██████╗ ██████╗ ███████╗   ███████╗██╗   ██╗"
+  " ████╗  ██║██╔════╝██╔═══██╗██╔════╝   ██╔════╝██║   ██║"
+  " ██╔██╗ ██║██║     ██║   ██║█████╗     █████╗  ██║   ██║"
+  " ██║╚██╗██║██║     ██║   ██║██╔══╝     ██╔══╝  ██║   ██║"
+  " ██║ ╚████║╚██████╗╚██████╔╝███████╗   ██║     ╚██████╔╝"
+  " ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝      ╚═════╝ "
+)
 
-  🌈 NVIDIA Fan Control — TRIPPY INSTALLER 🌈
-  This will copy the NVML-powered daemon to /usr/local/bin
-  and enable a systemd service so your fans stay adaptive on boot.
-RB
+# Print the banner with per-character gradient
+for line in "${banner[@]}"; do
+  per_char_gradient "$line" "$DELAY"
+done
 
-echo
-cp ./nvidia-fan-control.py /usr/local/bin/nvidia-fan-control.py
-chmod +x /usr/local/bin/nvidia-fan-control.py
+# Small explanatory blurb
+printf "\n"
+per_char_gradient "NVIDIA Fan Control — installed via neon installer" "$DELAY"
+printf "\n"
 
-cat > /etc/systemd/system/nvidia-fan-control.service <<'SERVICE'
+# Spinner while copying files
+spinner_chars=("|" "/" "-" "\\")
+
+copy_and_enable() {
+  cp ./nvidia-fan-control.py /usr/local/bin/nvidia-fan-control.py &
+  PID=$!
+  i=0
+  while kill -0 "$PID" 2>/dev/null; do
+    printf "\r[%s] Installing..." "${spinner_chars[$((i % 4))]}"
+    i=$((i+1))
+    sleep 0.12
+  done
+  wait "$PID"
+  printf "\r[✓] File copied.             \n"
+
+  # Write systemd service
+  cat > /etc/systemd/system/nvidia-fan-control.service <<'SERVICE'
 [Unit]
 Description=NVIDIA GPU Dynamic Fan Control
 After=nvidia-persistenced.service
@@ -46,14 +86,14 @@ TimeoutStopSec=15
 WantedBy=multi-user.target
 SERVICE
 
-systemctl daemon-reload
-systemctl enable --now nvidia-fan-control.service
+  systemctl daemon-reload
+  systemctl enable --now nvidia-fan-control.service
+}
+
+copy_and_enable
+
+printf "\n"
+per_char_gradient "All set — fans will now be adaptive on boot." "$DELAY"
+per_char_gradient "Check status: sudo systemctl status nvidia-fan-control.service" "$DELAY"
 
 echo
-rainbow_banner <<'RB'
-  ✅ Installed and started: nvidia-fan-control.service
-  🔎 Check status: sudo systemctl status nvidia-fan-control.service
-  📜 View logs: sudo journalctl -u nvidia-fan-control.service -f
-RB
-
-echo "Installer finished. Stay trippy."

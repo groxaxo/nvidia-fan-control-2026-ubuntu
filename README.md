@@ -1,39 +1,23 @@
-# ⚡️🌈 NVIDIA Fan Control — TRIPPY EDITION 🛸🍄
+# 🌌 NVIDIA Fan Control — TRIPPY EDITION 🌈🛸
 
-╔════════════════════════════════════════════════════════════════════════╗
-║  🌀✨🌈 WELCOME, EARTHLING — meet the fan guardian that GROOVES with temps 🌈✨🌀  ║
-╠════════════════════════════════════════════════════════════════════════╣
-║  This daemon listens to each NVIDIA GPU's heartbeat (temperature), and    ║
-║  gently nudges the fans to keep your rig cool, quiet, and very, very     ║
-║  relaxed. No X server. Just NVML, pure vibes.                            ║
-╚════════════════════════════════════════════════════════════════════════╝
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+  WELCOME to the neon hum — the fan daemon that dances
+  with GPU temperatures. It listens, it nudges, it soothes.
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 
-                  .-"""-.
-               .-"       "-.
-             .'  .-"""-.  `.
-            /   /  .-.  \   \
-           ;   ;  (   )  ;   ;
-           |   |   `-`   |   |
-           ;   ;  .---.  ;   ;
-            \   \(     )/   /
-             `.  `-.-'  .'
-               `-.___.-'
+This tool is NVML-driven and runs as a systemd service. It
+keeps your GPUs cool and your audio/visual rigs humming.
 
----
+Features:
+- Adaptive fan curves: default, quiet, performance
+- Systemd service for autostart
+- No X server needed — pure NVML
 
-NVML-driven, systemd-enabled, and tuned with three curves:
-- default — balanced cooling
-- quiet — quieter, warmer
-- performance — aggressive cooling
-
-Quick install (summary):
+Run the installer to experience the full trippy banner:
 
 ```bash
-sudo apt update
-sudo apt install -y python3 python3-pip
-sudo pip3 install nvidia-ml-py
-sudo ./install.sh    # from the repo root
+sudo ./install.sh
 ```
 
-More details, usage, and troubleshooting below in this README.
+Usage and troubleshooting below.
 
