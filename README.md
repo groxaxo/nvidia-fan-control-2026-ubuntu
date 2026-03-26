@@ -21,3 +21,16 @@ sudo ./install.sh
 
 Usage and troubleshooting below.
 
+
+## Optional: Psychedelic installer (interactive)
+
+A fun, interactive installer for humans that want a visual flourish.
+
+Dependencies: asciimatics
+
+To try it:
+
+```bash
+sudo pip3 install asciimatics
+python3 install_psychedelic.py
+```
